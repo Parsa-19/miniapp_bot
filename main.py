@@ -33,8 +33,8 @@ you can use these commands to use the bot
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 	logger.info(f'User {update.effective_user.id} started the bot')
 	
-	web_app_lunch_button = InlineKeyboardButton('lunch web app', callback_data='web_app')
-	random_button =  InlineKeyboardButton('random response', callback_data='random')
+	# web_app_lunch_button = InlineKeyboardButton('lunch web app', callback_data='web_app')
+	# random_button =  InlineKeyboardButton('random response', callback_data='random')
 	# keyboard = [
 	# 	web_app_lunch_button,
 	# 	random_button

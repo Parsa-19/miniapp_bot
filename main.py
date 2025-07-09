@@ -1,5 +1,5 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, WebAppInfo
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
 import logging
 import sys
@@ -32,11 +32,21 @@ you can use these commands to use the bot
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 	logger.info(f'User {update.effective_user.id} started the bot')
+	
+	web_app_lunch_button = InlineKeyboardButton('lunch web app', callback_data='web_app')
+	random_button =  InlineKeyboardButton('random response', callback_data='random')
+	# keyboard = [
+	# 	web_app_lunch_button,
+	# 	random_button
+	# ]
 	keyboard = [
-		[InlineKeyboardButton(
+		[
+		InlineKeyboardButton(
 			"Start game mini app",
-			web_app = {'url': MINI_APP_URL}
-			)]
+			# web_app = {'url': MINI_APP_URL}
+			web_app = WebAppInfo(url=MINI_APP_URL)
+			)
+		]
 	]
 	reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -60,6 +70,12 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 	await update.message.reply_text(HELP_MESSAGE)
 
 
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+	query = update.callback_query
+    await query.answer()
+    await query.edit_message_text(text=f"You clicked: {query.data}")
+
+
 async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 	logger.error('Exception while handling an update:', exc_info = context.error)
 	if update and update.effective_message:
@@ -79,6 +95,7 @@ if __name__ == '__main__':
 
 	app.add_handler(CommandHandler('start', start_command))
 	app.add_handler(CommandHandler('help', help_command))
+	app.add_handler(CallbackQueryHandler(button_handler))
 
 	app.add_error_handler(error_handler)
 

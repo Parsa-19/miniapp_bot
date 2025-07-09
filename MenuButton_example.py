@@ -1,5 +1,6 @@
-from telegram import Update, BotCommand, MenuButtonCommands
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo, LoginUrl
+from telegram import Update, BotCommand, MenuButtonCommands, MenuButton, MenuButtonWebApp
+from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 import logging
 import sys
 
@@ -31,13 +32,14 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def about_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Created with ❤️ using python-telegram-bot.")
 
-async def set_menu_button(application):
+async def set_webapp_menu_button(application):
     """Set the custom menu button with predefined commands."""
     await application.bot.set_my_commands(COMMANDS)
     await application.bot.set_chat_menu_button(menu_button=MenuButtonCommands())
+    await application.bot.set_chat_menu_button(
+        menu_button=MenuButtonWebApp(text="Open WebApp", web_app=WebAppInfo(url='https://js13kgames.com/games/offline-paradise'))
+    )
 
-async def post_init(application: Application):
-    await set_menu_button(application)
 
 
 def main():
@@ -48,6 +50,8 @@ def main():
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("about", about_command))
 
+    async def post_init(application: Application):
+        await set_webapp_menu_button(application)
 
     app.post_init = post_init  # Assign the async function
 

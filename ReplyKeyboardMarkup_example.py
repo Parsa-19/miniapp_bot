@@ -1,4 +1,4 @@
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, WebAppInfo, KeyboardButton
 from telegram.ext import (
     ApplicationBuilder,
     Application,
@@ -23,15 +23,19 @@ TOKEN = '7751960511:AAHLrDZD_5oW2Td9MleAh_HnSMg5-ljzLTo'
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    reply_keyboard = [['Option 1', 'Option 2'], ['Option 3', 'Option 4']]
-    
+    web_app = WebAppInfo(url='https://js13kgames.com/games/offline-paradise')
+    webapp_button = KeyboardButton(
+        text="Open Web App",
+        web_app=web_app
+    )
+    keyboard = ReplyKeyboardMarkup(
+    keyboard=[[webapp_button]],
+    resize_keyboard=True,
+    one_time_keyboard=True
+    )
     await update.message.reply_text(
         "Please choose an option:",
-        reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard,
-            resize_keyboard=True, 
-            one_time_keyboard=True 
-        )
+        reply_markup=keyboard
     )
 
 async def handle_selection(update: Update, context: ContextTypes.DEFAULT_TYPE):
